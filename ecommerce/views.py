@@ -104,5 +104,31 @@ def get_product(request:HttpRequest,id) -> JsonResponse:
 
         return JsonResponse(to_product(product))
     
-def get_product_id(request:HttpRequest,comp_id,id) -> JsonResponse:
-    pass
+def get_product_id(request:HttpRequest,company_id,id) -> JsonResponse:
+    try:
+        company = Company.objects.get(id = company_id)
+        product = Product.objects.get(company=company,id = id)
+    except ObjectDoesNotExist:
+        return JsonResponse({'status': 'object does not exist!'})
+
+    if request.method == 'GET':
+        return JsonResponse(to_product(product))
+
+    elif request.method == 'PUT':
+        data_json = request.body.decode()
+        data = json.loads(data_json)
+
+        if data.get('name'):
+            product.name = data['name']
+        if data.get('price'):
+            product.price = data['price']
+
+        product.save()
+
+        return JsonResponse(to_product(product))
+
+    elif request.method == 'DELETE':
+        product.delete()
+
+        return JsonResponse({'status': 'ok'})
+
