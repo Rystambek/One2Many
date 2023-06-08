@@ -35,8 +35,8 @@ class CompanyView(View):
             return JsonResponse({'status':'website yo\'q'})
         
         company = Company.objects.create(
-            first_name = data['name'],
-            last_name = data['website']
+            name = data['name'],
+            website = data['website']
         )
 
         company.save()
